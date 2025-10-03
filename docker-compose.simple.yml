@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  interview-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - WITAI_TOKEN=${WITAI_TOKEN:-}
+      - DEFAULT_JOB_DESCRIPTION=${DEFAULT_JOB_DESCRIPTION:-Software Engineer focusing on backend Python services.}
+      - DEFAULT_EXPERIENCE_REQUIRED=${DEFAULT_EXPERIENCE_REQUIRED:-3}
+      - DEFAULT_CANDIDATE_NAME=${DEFAULT_CANDIDATE_NAME:-Candidate}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
