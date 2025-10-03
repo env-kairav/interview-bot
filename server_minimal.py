@@ -125,6 +125,10 @@ async def main():
                 <li><a href="/wit">Wit.ai Console</a> - Speech recognition testing</li>
                 <li><a href="/call-witai">Interview Interface</a> - Main application</li>
             </ul>
+            <div class="status">
+                <h3>🔧 WebSocket Fix Applied</h3>
+                <p>WebSocket connections now automatically use WSS for HTTPS sites.</p>
+            </div>
         </div>
     </body>
     </html>

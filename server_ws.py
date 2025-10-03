@@ -422,7 +422,8 @@ async def root():
       const job = encodeURIComponent(jobEl.value.trim());
       const exp = encodeURIComponent(expEl.value.trim());
       const name = encodeURIComponent(nameEl.value.trim());
-      const url = `ws://${location.host}/ws?job=${job}&exp=${exp}&name=${name}`;
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const url = `${protocol}//${location.host}/ws?job=${job}&exp=${exp}&name=${name}`;
       ws = new WebSocket(url);
 
       ws.onopen = () => { console.log('[connected] Waiting for greeting...'); };
