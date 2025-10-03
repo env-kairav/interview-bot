@@ -8,17 +8,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     curl \
-    gcc \
-    g++ \
-    make \
-    portaudio19-dev \
-    python3-dev \
-    libasound2-dev \
-    libsndfile1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY requirements-cloud.txt requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
