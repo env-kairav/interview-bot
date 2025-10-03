@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Production startup script for Interview Bot
+# Production startup script for Interview Bot (without Wit.ai requirement)
 
-echo "🚀 Starting Interview Bot..."
+echo "🚀 Starting Interview Bot (without Wit.ai requirement)..."
 
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
@@ -25,16 +25,9 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Check if API keys are configured
+# Check if OpenAI API key is configured
 if grep -q "your_openai_api_key_here" .env; then
     echo "⚠️  Please configure your OpenAI API key in .env file"
-    exit 1
-fi
-
-if grep -q "your_wit_ai_token_here" .env; then
-    echo "⚠️  Please configure your Wit.ai token in .env file"
-    echo "   Get your token from: https://wit.ai/apps"
-    echo "   Then edit .env file and replace 'your_wit_ai_token_here' with your actual token"
     exit 1
 fi
 
@@ -48,9 +41,9 @@ fi
 # Start the server
 echo "🌟 Starting server on http://localhost:8000"
 echo "   - Main app: http://localhost:8000"
-echo "   - Wit.ai console: http://localhost:8000/wit"
 echo "   - Health check: http://localhost:8000/health"
 echo ""
+echo "Note: Wit.ai features will be limited without proper token"
 echo "Press Ctrl+C to stop the server"
 
 uvicorn server_ws:app --host 0.0.0.0 --port 8000
