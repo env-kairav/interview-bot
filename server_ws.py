@@ -60,10 +60,19 @@ def save_db(db: Dict[str, Any]) -> None:
     os.replace(tmp_path, DB_PATH)
 
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize OpenAI client only if API key is available
+client = None
+if os.getenv("OPENAI_API_KEY"):
+    try:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    except Exception as e:
+        print(f"Warning: Failed to initialize OpenAI client: {e}")
+        client = None
 
 
 async def chat_completion(messages, temperature=0.3):
+    if not client:
+        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
     return await asyncio.to_thread(
         client.chat.completions.create,
         model="gpt-3.5-turbo",
@@ -99,6 +108,8 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "service": "interview-bot",
+        "openai_configured": client is not None,
+        "tts_configured": piper_tts is not None,
     }
 
 
