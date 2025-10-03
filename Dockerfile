@@ -1,0 +1,44 @@
+# Use Python 3.11 slim image
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p voices
+
+# Set up Piper TTS
+RUN mkdir -p /root/piper/piper && \
+    cd /root/piper && \
+    curl -L -o piper.tar.gz "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz" && \
+    tar -xzf piper.tar.gz && \
+    chmod +x piper/piper && \
+    rm piper.tar.gz && \
+    cd piper && \
+    curl -L -o amy-medium.onnx "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/amy/medium/en_US-amy-medium.onnx" && \
+    curl -L -o amy-medium.onnx.json "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/amy/medium/en_US-amy-medium.onnx.json"
+
+# Expose port
+EXPOSE 8000
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PIPER_PATH=/root/piper/piper/piper
+
+# Run the application
+CMD ["uvicorn", "server_ws:app", "--host", "0.0.0.0", "--port", "8000"]
